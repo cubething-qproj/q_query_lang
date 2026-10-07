@@ -1,0 +1,13 @@
+# ------------------------------------------
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# -------------------------------- 𝒒𝒑𝒓𝒐𝒋 --
+
+# Linux builds
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = [
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+    "-Clink-arg=-fuse-ld=mold",
+]

@@ -1,0 +1,15 @@
+[package]
+name = "q_query_lang"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/cubething-qproj/q_query_lang"
+
+[dependencies]
+bevy = "0.19"
+tiny_bail = "0.7"
+
+[lints]
+clippy.too_many_arguments = "allow"
+clippy.type_complexity = "allow"
+clippy.nonstandard_macro_braces = "warn"

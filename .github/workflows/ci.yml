@@ -1,0 +1,21 @@
+name: CI
+on:
+    push:
+        branches: ["main", "release/*"]
+    pull_request:
+
+jobs:
+    pipeline:
+        permissions:
+            contents: write
+            pull-requests: write
+            issues: write
+            id-token: write
+        uses: cubething-qproj/infra/.github/workflows/downstream-pipeline.yml@main
+        with:
+            build-args: ${{ vars.QPROJ_BUILD_ARGS_JSON || '[]' }}
+            clippy-args: ${{ vars.QPROJ_CLIPPY_ARGS }}
+            test-args: ${{ vars.QPROJ_TEST_ARGS_JSON || '[]' }}
+            coverage-all-features: ${{ vars.QPROJ_COVERAGE_ALL_FEATURES == 'true' }}
+        secrets:
+            DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
