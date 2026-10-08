@@ -8,7 +8,7 @@
 import sys
 from pathlib import Path
 
-from abnf import ParseError, Rule
+from abnf import ParseError, Rule  # type: ignore[import-not-found]
 
 GRAMMAR_FILE = Path(__file__).with_name("grammar.ebnf")
 
@@ -51,7 +51,6 @@ Foo
 optional(Foo)
 mut(Health)
 optional(mut(Health))
-boolean(Player)
 ref(Health)
 single(#Floor)
 single(Name[+Enemy])
@@ -74,6 +73,7 @@ Foo[+Bar
 +Enemy
 Children::
 Children::Brush
+boolean(Player)
 """.splitlines()
 
 

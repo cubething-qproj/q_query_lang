@@ -7,7 +7,9 @@ repository = "https://github.com/cubething-qproj/q_query_lang"
 
 [dependencies]
 bevy = "0.19"
+thiserror = "2"
 tiny_bail = "0.7"
+winnow = "1"
 
 [lints]
 clippy.too_many_arguments = "allow"

@@ -3,10 +3,9 @@
 query           = term *("|" term)
 
 term            = path / single
-single          = %s"single(" query ")"
+single          = %s"single(" path ")"
 
-path            = [prefix] step *(sep step)
-prefix          = "/" / "//"
+path            = [sep] step *(sep step)
 sep             = "/" / "//"
 
 step            = node-step / parent-step / fetch-step
@@ -20,7 +19,7 @@ name-test       = "#" name
 wildcard        = "*"
 
 fetch           = entity-fetch / component-fetch / opt-fetch / opt-mut-fetch / mut-fetch
-                / optional-wrap / mut-wrap / boolean-fetch / ref-fetch
+                / optional-wrap / mut-wrap / ref-fetch
 entity-fetch    = "@"             ; Entity QueryData, never a component prefix
 component-fetch = type            ; bare T = &T, including relationship components
 opt-fetch       = "?" type
@@ -28,7 +27,6 @@ opt-mut-fetch   = "?^" type
 mut-fetch       = "^" type
 optional-wrap   = %s"optional(" (component-fetch / mut-wrap) ")"
 mut-wrap        = %s"mut(" component-fetch ")"
-boolean-fetch   = %s"boolean(" type ")"
 ref-fetch       = %s"ref(" type ")"
 
 type            = IDENT
@@ -39,20 +37,24 @@ pred-expr       = or-expr
 or-expr         = and-expr *(1*SP %s"or" 1*SP and-expr)
 and-expr        = pred-atom *(and-sep pred-atom)
 and-sep         = 1*SP / 1*SP %s"and" 1*SP
-pred-atom       = presence / tick / positional / not-group / pred-group
+pred-atom       = pred-primary / not-group / pred-group
+pred-primary    = presence / tick / positional
 presence        = ("+" / "-") type / %s"with(" type ")"
                 / %s"without(" type ")"
 tick            = %s"changed(" type ")"
                 / %s"added(" type ")"
                 / %s"spawned()"
 positional      = INT / %s"last()"
-not-group       = %s"not(" pred-expr ")"
-pred-group      = "(" pred-expr ")"
+not-group       = %s"not(" group-expr ")"
+pred-group      = "(" group-expr ")"
+group-expr      = group-or-expr
+group-or-expr   = group-and-expr *(1*SP %s"or" 1*SP group-and-expr)
+group-and-expr  = pred-primary *(and-sep pred-primary)
 
 field           = "." field-name / "[" positional "]"
 field-name      = IDENT / INT          ; INT = tuple fields (.0)
 
 ; lexical terminals
 IDENT           = (ALPHA / "_") *(ALPHA / DIGIT / "_")
-INT             = 1*DIGIT
+INT             = 1*DIGIT              ; semantic value must fit Rust usize
 quoted-name     = DQUOTE 1*(%x21 / %x23-7E / SP) DQUOTE
