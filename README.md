@@ -1,22 +1,19 @@
 # q_query_lang
 
-An XPath-based query language for Bevy.
-
-Queries read like paths, with Bevy `QueryData` first and filters attached in
-brackets:
+A read-only, string-based query language for Bevy. A program is a pipeline of
+Bevy-style `D[F]` queries; each stage runs over the entities the previous
+stage produced.
 
 ```text
-Name[+Enemy -Dead]
-#Floor/Children::*/Brush.faces[1].material
-#Terminal/shell.0/Process
+(Name ?Health)[Enemy !Dead]
+#Floor | Children[..][#West] | Brush
+@(12v3 4v1) | (Name Transform)
 ```
 
 The first query corresponds to
-`Query<&Name, (With<Enemy>, Without<Dead>)>`. The second follows Bevy's
-`Children` relationship before projecting a reflected field. The third follows
-an ordinary Entity-valued component field through re-entry.
-
-See `bnf/grammar.ebnf` for the normative syntax.
+`Query<(&Name, Option<&Health>), (With<Enemy>, Without<Dead>)>`. The second
+follows Floor's `Children` to the child named West and reads its `Brush`. The
+third reads two components from two specific entities.
 
 ## License
 
