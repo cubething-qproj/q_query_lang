@@ -57,5 +57,7 @@
 
 pub mod ast;
 mod parser;
+mod plan;
 
 pub use parser::{Expected, ParseError, parse};
+pub use plan::{Column, ColumnType, PlanError, QueryPlan, Schema};

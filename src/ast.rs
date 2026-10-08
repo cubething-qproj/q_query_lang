@@ -3,7 +3,7 @@
 //! Every node carries the byte span of its source text. The tree owns its
 //! strings so that plans never borrow the query text.
 
-use std::ops::Range;
+use std::{fmt, ops::Range};
 
 /// A byte range in the original query string.
 pub type Span = Range<usize>;
@@ -151,6 +151,21 @@ pub struct TypeAst {
     pub args: Vec<TypeAst>,
     /// The type's byte range.
     pub span: Span,
+}
+
+/// Renders the type as written, normalized: `a::B<C D>`.
+impl fmt::Display for TypeAst {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.path.join("::"))?;
+        if let Some((first, rest)) = self.args.split_first() {
+            write!(f, "<{first}")?;
+            for arg in rest {
+                write!(f, " {arg}")?;
+            }
+            f.write_str(">")?;
+        }
+        Ok(())
+    }
 }
 
 /// An entity name, with quotes removed.
