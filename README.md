@@ -1,8 +1,8 @@
 # q_query_lang
 
 A read-only, string-based query language for Bevy. A program is a pipeline of
-Bevy-style `D[F]` queries; each stage runs over the entities the previous
-stage produced.
+Bevy-style `D[F]` queries; each stage runs over the source entities of the
+previous stage's rows.
 
 ```text
 (Name ?Health)[Enemy !Dead]
