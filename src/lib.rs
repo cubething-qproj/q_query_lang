@@ -8,6 +8,25 @@
 //! The normative grammar and semantics live in the org-level
 //! `q_query_lang design.md`.
 //!
+//! # Usage
+//!
+//! Planning resolves types against the registry without touching the World;
+//! execution runs atomically and returns owned snapshot rows.
+//!
+//! ```
+//! # use bevy::{prelude::*, reflect::TypeRegistry};
+//! # use q_query_lang::QueryPlan;
+//! let mut registry = TypeRegistry::default();
+//! registry.register::<Name>();
+//! let mut world = World::new();
+//! world.spawn(Name::new("Floor"));
+//!
+//! let plan = QueryPlan::new("Name[#Floor]", &registry)?;
+//! let result = plan.execute(&mut world)?;
+//! assert_eq!(result.rows.len(), 1);
+//! # Ok::<(), Box<dyn std::error::Error>>(())
+//! ```
+//!
 //! # Syntax at a glance
 //!
 //! | Query                           | Meaning                                                   |
@@ -56,8 +75,10 @@
 //!   path-qualified there: `[my_crate::or]`.
 
 pub mod ast;
+mod exec;
 mod parser;
 mod plan;
 
+pub use exec::{ExecError, QueryResult, Row, RowValue};
 pub use parser::{Expected, ParseError, parse};
 pub use plan::{Column, ColumnType, PlanError, QueryPlan, Schema};

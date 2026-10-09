@@ -3,7 +3,7 @@
 //! A [`QueryPlan`] holds no World reference. All syntax and type-resolution
 //! errors surface here; nothing runs.
 
-use std::any::TypeId;
+use std::{any::TypeId, fmt};
 
 use bevy::{
     ecs::{name::Name, reflect::ReflectComponent},
@@ -19,7 +19,6 @@ use crate::{
 /// A parsed, type-checked query, ready to execute.
 #[derive(Clone, Debug)]
 pub struct QueryPlan {
-    #[allow(dead_code, reason = "read by execution, phase 3")]
     pub(crate) stages: Vec<StagePlan>,
     schema: Schema,
     reads: Vec<TypeId>,
@@ -164,7 +163,6 @@ pub enum PlanError {
 
 /// One planned stage.
 #[derive(Clone, Debug)]
-#[allow(dead_code, reason = "read by execution, phase 3")]
 pub(crate) struct StagePlan {
     pub(crate) head: Head,
     pub(crate) ops: Vec<Op>,
@@ -172,7 +170,6 @@ pub(crate) struct StagePlan {
 
 /// What a stage produces before its postfix operators.
 #[derive(Clone, Debug)]
-#[allow(dead_code, reason = "read by execution, phase 3")]
 pub(crate) enum Head {
     /// Entity literals; only in the first stage.
     Literal(Vec<EntityId>),
@@ -181,16 +178,40 @@ pub(crate) enum Head {
 }
 
 /// One resolved data term.
-#[derive(Clone, Debug)]
-#[allow(dead_code, reason = "read by execution, phase 3")]
+#[derive(Clone)]
 pub(crate) enum TermPlan {
     Entity,
-    Component { type_id: TypeId, optional: bool },
+    Component {
+        type_id: TypeId,
+        optional: bool,
+        /// The type as written, for execution errors.
+        label: String,
+        /// Reads the component for its snapshot.
+        reflect: ReflectComponent,
+    },
+}
+
+impl fmt::Debug for TermPlan {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Entity => f.write_str("Entity"),
+            Self::Component {
+                type_id,
+                optional,
+                label,
+                ..
+            } => f
+                .debug_struct("Component")
+                .field("type_id", type_id)
+                .field("optional", optional)
+                .field("label", label)
+                .finish_non_exhaustive(),
+        }
+    }
 }
 
 /// A resolved postfix operator.
 #[derive(Clone, Debug)]
-#[allow(dead_code, reason = "read by execution, phase 3")]
 pub(crate) enum Op {
     Take(TakeRange),
     Select(FilterPlan),
@@ -343,7 +364,7 @@ fn plan_term(
             Ok((TermPlan::Entity, entity_column(), span.clone(), None))
         };
     }
-    let registration = types.resolve(ty)?;
+    let (registration, reflect) = types.resolve(ty)?;
     let opaque_fetch =
         matches!(registration.type_info(), TypeInfo::Opaque(_)).then(|| PlanError::OpaqueFetch {
             ty: ty.to_string(),
@@ -359,7 +380,12 @@ fn plan_term(
         },
     };
     Ok((
-        TermPlan::Component { type_id, optional },
+        TermPlan::Component {
+            type_id,
+            optional,
+            label: ty.to_string(),
+            reflect: reflect.clone(),
+        },
         column,
         span.clone(),
         opaque_fetch,
@@ -395,7 +421,7 @@ fn plan_filter(
                     span: ty.span.clone(),
                 });
             }
-            let type_id = types.resolve(ty)?.type_id();
+            let type_id = types.resolve(ty)?.0.type_id();
             if negated {
                 FilterPlan::Without(type_id)
             } else {
@@ -441,7 +467,10 @@ impl<'r> RegisteredTypes<'r> {
     }
 
     /// Resolves `ty` to exactly one registered component.
-    fn resolve(&self, ty: &TypeAst) -> Result<&'r TypeRegistration, PlanError> {
+    fn resolve(
+        &self,
+        ty: &TypeAst,
+    ) -> Result<(&'r TypeRegistration, &'r ReflectComponent), PlanError> {
         let mut matches = self
             .entries
             .iter()
@@ -469,13 +498,13 @@ impl<'r> RegisteredTypes<'r> {
                 });
             }
         };
-        if registration.data::<ReflectComponent>().is_none() {
+        let Some(reflect) = registration.data::<ReflectComponent>() else {
             return Err(PlanError::NotAComponent {
                 ty: ty.to_string(),
                 span: ty.span.clone(),
             });
-        }
-        Ok(registration)
+        };
+        Ok((registration, reflect))
     }
 }
 

@@ -50,8 +50,18 @@ fn registry() -> TypeRegistry {
     registry
 }
 
+/// Plans `text`, logging the schema or error. See it with `--no-capture`.
 fn plan(text: &str) -> Result<QueryPlan, PlanError> {
-    QueryPlan::new(text, &registry())
+    let plan = QueryPlan::new(text, &registry());
+    match &plan {
+        Ok(plan) => println!(
+            "> {text}\nschema: {:?}\nreads: {:?}\n",
+            plan.schema(),
+            plan.reads()
+        ),
+        Err(error) => println!("> {text}\nerror: {error}\n"),
+    }
+    plan
 }
 
 fn schema(text: &str) -> Schema {

@@ -86,18 +86,20 @@ const NEGATIVE: &[&str] = &[
 #[test]
 fn accepts_positive_corpus() {
     for input in POSITIVE {
-        assert!(parse(input).is_ok(), "{input:?}: {:?}", parse(input));
+        let program = parse(input);
+        println!("> {input}\n{program:#?}\n");
+        assert!(program.is_ok(), "{input:?}: {program:?}");
     }
 }
 
 #[test]
 fn rejects_negative_corpus() {
     for input in NEGATIVE {
-        assert!(
-            parse(input).is_err(),
-            "{input:?} parsed: {:?}",
-            parse(input)
-        );
+        let program = parse(input);
+        match &program {
+            Err(error) => println!("> {input}\nerror: {error}\n"),
+            Ok(_) => panic!("{input:?} parsed: {program:?}"),
+        }
     }
 }
 
