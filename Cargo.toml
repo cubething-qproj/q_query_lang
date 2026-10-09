@@ -6,10 +6,14 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/cubething-qproj/q_query_lang"
 
 [dependencies]
-bevy = "0.19"
+bevy = { version = "0.19", default-features = false, features = ["std"] }
 thiserror = "2"
 tiny_bail = "0.7"
 winnow = "1"
+
+[features]
+dylib = ["bevy/dynamic_linking"]
+default = ["dylib"]
 
 [lints]
 clippy.too_many_arguments = "allow"
