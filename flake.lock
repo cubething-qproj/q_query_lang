@@ -25,11 +25,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1791516762,
-        "narHash": "sha256-Z2rG2LgJku9CR1N/U5nPToJdyc1g5t9uuAogXFGStCA=",
+        "lastModified": 1793744889,
+        "narHash": "sha256-YKgETVv9ZXAesxzX2Jyr7Fri0TheoWSGdb+8HgBW9eo=",
         "owner": "cubething-qproj",
         "repo": "infra",
-        "rev": "c0d8f1cf77861fa4f9222ea15ca1f30a6b25ff65",
+        "rev": "75f0b6d4a00da48b1f826fbc6dfbc530b94fea19",
         "type": "github"
       },
       "original": {
@@ -67,11 +67,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789543870,
-        "narHash": "sha256-45ikFmtfgBZgMePIm4GevJ9VjDSWO3PGQgOuuwHDpes=",
+        "lastModified": 1793610678,
+        "narHash": "sha256-5V08BokWHSUU962Kcr/uSTWyy+1NqB7pjuyqjqXTqQU=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "35ca0490d13a3d38c4602d0eb9600a30fa63a367",
+        "rev": "6b29b8e8d3cc8ebda9342fbbcc7ac06eff58e2fb",
         "type": "github"
       },
       "original": {
