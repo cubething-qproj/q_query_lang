@@ -5,9 +5,4 @@
 # Linux builds
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
-rustflags = [
-    # Nightly
-    "-Zshare-generics=y",
-    "-Zthreads=0",
-    "-Clink-arg=-fuse-ld=mold",
-]
+rustflags = ["-Clink-arg=-fuse-ld=mold"]

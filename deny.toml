@@ -27,7 +27,7 @@ wildcards = "warn"
 highlight = "all"
 workspace-default-features = "allow"
 external-default-features = "allow"
-deny = [{ crate = "bevy:<0.19", reason = "upgrade to latest bevy" }]
+deny = [{ crate = "bevy:<0.20", reason = "upgrade to latest bevy" }]
 
 [sources]
 unknown-registry = "warn"
