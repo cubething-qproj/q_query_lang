@@ -278,7 +278,7 @@ impl Stage {
                 let row = |entity: FilteredEntityRef| row_ref(&entity, terms);
                 match input {
                     None => state.iter(world).map(row).collect(),
-                    Some(input) => state.iter_many(world, input).map(row).collect(),
+                    Some(input) => state.iter_many(world, input).matched().map(row).collect(),
                 }
             }
         };
