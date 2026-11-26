@@ -1,0 +1,13 @@
+name: Publish
+on:
+    push:
+        tags: ["v*"]
+
+jobs:
+    publish:
+        permissions:
+            contents: read
+            id-token: write
+        uses: cubething-qproj/infra/.github/workflows/downstream-publish.yml@main
+        secrets:
+            CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

@@ -25,11 +25,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1794196544,
-        "narHash": "sha256-0owNA+lCu5MktzcQS2Ho0vrmsXqcIkvFStriADyINy4=",
+        "lastModified": 1795673814,
+        "narHash": "sha256-j/E9skFfe+fd0oXMgUovzbblLMp0wZZkRXWfpQCrSnI=",
         "owner": "cubething-qproj",
         "repo": "infra",
-        "rev": "57489d02533b056d507d45ccc0cc9dc9bde75335",
+        "rev": "10e8171f20b66258411f99f6a3b0e6dc634a2fa8",
         "type": "github"
       },
       "original": {
